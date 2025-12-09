@@ -42,8 +42,8 @@ export const stripeRedirect = async () => {
             },
         ],
         mode: "subscription",
-        success_url: `${appUrl}/dashboard`,
-        cancel_url: `${appUrl}/dashboard`,
+        success_url: `${appUrl}/presentation`,
+        cancel_url: `${appUrl}/presentation`,
         metadata: {
             userId,
         },
@@ -87,7 +87,7 @@ export const manageSubscription = async () => {
 
     const stripeSession = await stripe.billingPortal.sessions.create({
         customer: user.stripeCustomerId,
-        return_url: `${appUrl}/dashboard`,
+        return_url: `${appUrl}/presentation`,
     });
 
     redirect(stripeSession.url);

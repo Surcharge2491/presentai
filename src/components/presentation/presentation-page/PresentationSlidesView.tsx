@@ -112,6 +112,7 @@ export const PresentationSlidesView = ({
                   )}
                 >
                   <PresentationEditor
+                    key={`${slide.id}-${isPresenting}`}
                     initialContent={slide}
                     className={cn(
                       "min-h-[300px] rounded-md border",
