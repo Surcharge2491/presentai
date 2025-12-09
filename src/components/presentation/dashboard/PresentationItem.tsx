@@ -28,9 +28,11 @@ import { cn } from "@/lib/utils";
 import { usePresentationState } from "@/states/presentation-state";
 import { type BaseDocument } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useExportPresentation } from "@/hooks/use-export-presentation";
 import {
   Check,
   Copy,
+  Download,
   EllipsisVertical,
   Loader2,
   Pencil,
@@ -67,6 +69,7 @@ export function PresentationItem({
   const [isNavigating, setIsNavigating] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { isExporting, handleExport } = useExportPresentation();
   const setCurrentPresentation = usePresentationState(
     (state) => state.setCurrentPresentation,
   );
@@ -277,6 +280,13 @@ export function PresentationItem({
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleExport(presentation.id, presentation.title)}
+                  disabled={isExporting}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

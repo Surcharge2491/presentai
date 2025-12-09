@@ -33,10 +33,12 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useExportPresentation } from "@/hooks/use-export-presentation";
 import {
   Calendar,
   ChevronRight,
   Clock,
+  Download,
   MoreHorizontal,
   Pencil,
   Trash2,
@@ -58,6 +60,7 @@ export function RecentPresentations() {
     string | null
   >(null);
   const [isNavigating, setIsNavigating] = useState<string | null>(null);
+  const { isExporting, handleExport } = useExportPresentation();
 
   const { data, isLoading, isError } = useInfiniteQuery({
     queryKey: ["presentations-all"],
@@ -330,6 +333,14 @@ export function RecentPresentations() {
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleExport(presentation.id, presentation.title || "presentation")}
+                    disabled={isExporting}
+                    className="cursor-pointer"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Export
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

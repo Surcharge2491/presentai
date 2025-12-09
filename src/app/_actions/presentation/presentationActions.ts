@@ -2,6 +2,7 @@
 
 import { type PlateSlide } from "@/components/presentation/utils/parser";
 import { requireUser } from "@/lib/supabase-server";
+import { syncSupabaseUserToPrisma } from "@/lib/sync-user";
 import { db } from "@/server/db";
 import { type InputJsonValue } from "@prisma/client/runtime/library";
 
@@ -25,6 +26,8 @@ export async function createPresentation({
   language?: string;
 }) {
   const user = await requireUser();
+  // Ensure user exists in Prisma to avoid foreign key errors
+  await syncSupabaseUserToPrisma();
   const userId = user.id;
 
   try {

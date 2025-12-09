@@ -16,7 +16,7 @@ const PricingPage = async () => {
                     {/* Free Plan */}
                     <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">
                         <h2 className="text-2xl font-semibold mb-4">Free</h2>
-                        <p className="text-4xl font-bold mb-6">$0<span className="text-base font-normal text-gray-500">/month</span></p>
+                        <p className="text-4xl font-bold mb-6">0 AED<span className="text-base font-normal text-gray-500">/month</span></p>
                         <ul className="space-y-3 mb-8">
                             <li className="flex items-center">
                                 <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
@@ -35,7 +35,7 @@ const PricingPage = async () => {
                             POPULAR
                         </div>
                         <h2 className="text-2xl font-semibold mb-4">Pro</h2>
-                        <p className="text-4xl font-bold mb-6">$19<span className="text-base font-normal text-gray-500">/month</span></p>
+                        <p className="text-4xl font-bold mb-6">69.99 AED<span className="text-base font-normal text-gray-500">/month</span></p>
                         <ul className="space-y-3 mb-8">
                             <li className="flex items-center">
                                 <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>

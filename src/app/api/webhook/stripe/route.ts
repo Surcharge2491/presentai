@@ -6,10 +6,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
-    // BLOCKED: Stripe logic disabled as requested
-    return new NextResponse("Stripe integration is currently disabled", { status: 200 });
-
-    /*
     const body = await req.text();
     const signature = (await headers()).get("Stripe-Signature") as string;
 
@@ -47,6 +43,7 @@ export async function POST(req: NextRequest) {
                 stripeCurrentPeriodEnd: new Date(
                     (subscription as any).current_period_end * 1000,
                 ),
+                hasAccess: true, // Grant access
             },
         });
     }
@@ -65,10 +62,10 @@ export async function POST(req: NextRequest) {
                 stripeCurrentPeriodEnd: new Date(
                     (subscription as any).current_period_end * 1000,
                 ),
+                hasAccess: true, // Ensure access is granted
             },
         });
     }
 
     return new NextResponse(null, { status: 200 });
-    */
 }

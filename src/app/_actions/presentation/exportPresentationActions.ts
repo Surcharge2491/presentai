@@ -21,8 +21,6 @@ export async function exportPresentation(
   try {
     const user = await requireUser();
 
-    // Here you would fetch the presentation data from your database
-    // This is a placeholder - implement actual data fetching based on your data model
     const presentationData = await fetchPresentationData(
       presentationId,
       user.id,
@@ -52,10 +50,6 @@ export async function exportPresentation(
 
 // Helper function to fetch presentation data
 async function fetchPresentationData(presentationId: string, userId: string) {
-  // Implement your actual data fetching logic here
-  // For now returning a placeholder
-
-  // In a real implementation, you would fetch from your database
   const presentation = await db.baseDocument.findFirst({
     where: { id: presentationId, userId: userId },
     include: { presentation: true },
