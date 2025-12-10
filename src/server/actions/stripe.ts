@@ -10,7 +10,7 @@ export const stripeRedirect = async () => {
     // Check if Stripe is configured
     if (!env.STRIPE_API_KEY || !env.STRIPE_PRICE_ID) {
         console.warn("Stripe is not configured, redirecting to dashboard");
-        redirect("/dashboard");
+        redirect("/presentation");
     }
 
     const session = await auth();
@@ -60,7 +60,7 @@ export const manageSubscription = async () => {
     // Check if Stripe is configured
     if (!env.STRIPE_API_KEY) {
         console.warn("Stripe is not configured, redirecting to dashboard");
-        redirect("/dashboard");
+        redirect("/presentation");
     }
 
     const session = await auth();
