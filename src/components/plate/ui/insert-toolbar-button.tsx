@@ -25,9 +25,20 @@ import {
   SquareIcon,
   TableIcon,
   TableOfContentsIcon,
+  PieChartIcon,
+  BarChartIcon,
+  LineChartIcon,
+  ActivityIcon,
 } from "lucide-react";
 import { KEYS } from "platejs";
 import { type PlateEditor, useEditorRef } from "platejs/react";
+
+import {
+  AREA_CHART_ELEMENT,
+  BAR_CHART_ELEMENT,
+  LINE_CHART_ELEMENT,
+  PIE_CHART_ELEMENT,
+} from "@/components/presentation/editor/lib";
 
 import {
   DropdownMenu,
@@ -55,7 +66,93 @@ interface Item {
   label?: string;
 }
 
+
+
 const groups: Group[] = [
+  {
+    group: "Charts",
+    items: [
+      {
+        icon: <PieChartIcon />,
+        label: "Pie Chart",
+        value: PIE_CHART_ELEMENT,
+        onSelect: (editor, value) => {
+          editor.tf.insertNodes(
+            editor.api.create.block({
+              type: value,
+              data: [
+                { label: "Segment A", value: 400 },
+                { label: "Segment B", value: 300 },
+                { label: "Segment C", value: 300 },
+                { label: "Segment D", value: 200 },
+              ],
+            }),
+            { select: true },
+          );
+        },
+      },
+      {
+        icon: <BarChartIcon />,
+        label: "Bar Chart",
+        value: BAR_CHART_ELEMENT,
+        onSelect: (editor, value) => {
+          editor.tf.insertNodes(
+            editor.api.create.block({
+              type: value,
+              data: [
+                { name: "Jan", total: 1200 },
+                { name: "Feb", total: 900 },
+                { name: "Mar", total: 1600 },
+                { name: "Apr", total: 1000 },
+              ],
+            }),
+            { select: true },
+          );
+        },
+      },
+      {
+        icon: <LineChartIcon />,
+        label: "Line Chart",
+        value: LINE_CHART_ELEMENT,
+        onSelect: (editor, value) => {
+          editor.tf.insertNodes(
+            editor.api.create.block({
+              type: value,
+              data: [
+                { name: "Jan", sales: 400 },
+                { name: "Feb", sales: 300 },
+                { name: "Mar", sales: 200 },
+                { name: "Apr", sales: 278 },
+                { name: "May", sales: 189 },
+              ],
+            }),
+            { select: true },
+          );
+        },
+      },
+      {
+        icon: <ActivityIcon />,
+        label: "Area Chart",
+        value: AREA_CHART_ELEMENT,
+        onSelect: (editor, value) => {
+          editor.tf.insertNodes(
+            editor.api.create.block({
+              type: value,
+              data: [
+                { month: "January", desktop: 186 },
+                { month: "February", desktop: 305 },
+                { month: "March", desktop: 237 },
+                { month: "April", desktop: 73 },
+                { month: "May", desktop: 209 },
+                { month: "June", desktop: 214 },
+              ],
+            }),
+            { select: true },
+          );
+        },
+      },
+    ],
+  },
   {
     group: "Basic blocks",
     items: [

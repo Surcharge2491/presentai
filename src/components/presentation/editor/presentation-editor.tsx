@@ -19,7 +19,12 @@ import ImageGenerationModel from "./custom-elements/image-generation-model";
 import RootImage from "./custom-elements/root-image";
 import LayoutImageDrop from "./dnd/components/LayoutImageDrop";
 import { presentationPlugins } from "./plugins";
+import { FixedToolbar } from "@/components/plate/ui/fixed-toolbar";
+import { FixedToolbarButtons } from "@/components/plate/ui/fixed-toolbar-buttons";
+import { FloatingToolbar } from "@/components/plate/ui/floating-toolbar";
+import { FloatingToolbarButtons } from "@/components/plate/ui/floating-toolbar-buttons";
 import PresentationEditorStaticView from "./presentation-editor-static";
+import { EditorSidebar } from "../presentation-page/EditorSidebar"; // Import Sidebar
 
 function slideSignature(slide?: PlateSlide): string {
   try {
@@ -62,7 +67,10 @@ const PresentationEditor = React.memo(
     const setCurrentSlideIndex = usePresentationState(
       (s) => s.setCurrentSlideIndex,
     );
+    const currentSlideIndexState = usePresentationState((s) => s.currentSlideIndex);
+    const isActive = slideIndex === currentSlideIndexState;
     const editor = usePlateEditor({
+      id: id,
       plugins: presentationPlugins,
       value: initialContent?.content ?? ({} as Value),
     });
@@ -141,7 +149,7 @@ const PresentationEditor = React.memo(
             backgroundColor: initialContent?.bgColor || undefined,
             backgroundImage:
               initialContent?.layoutType === "background" &&
-              initialContent?.rootImage?.url
+                initialContent?.rootImage?.url
                 ? `url(${initialContent.rootImage.url})`
                 : undefined,
             backgroundSize: "cover",
@@ -169,6 +177,12 @@ const PresentationEditor = React.memo(
               }}
               readOnly={isGenerating || readOnly}
             >
+              {!readOnly && !isGenerating && !isPreview && (
+                <FixedToolbar>
+                  <FixedToolbarButtons />
+                </FixedToolbar>
+              )}
+
               {/* Insert from palette via state */}
               <PaletteInsertionListener />
               {!readOnly && (
@@ -196,6 +210,12 @@ const PresentationEditor = React.memo(
                 }}
               />
 
+              {!readOnly && !isGenerating && !isPreview && (
+                <FloatingToolbar>
+                  <FloatingToolbarButtons />
+                </FloatingToolbar>
+              )}
+
               {initialContent?.rootImage &&
                 initialContent.layoutType !== undefined &&
                 initialContent.layoutType !== "background" && (
@@ -206,6 +226,7 @@ const PresentationEditor = React.memo(
                     slideId={initialContent.id}
                   />
                 )}
+              {isActive && !readOnly && !isGenerating && !isPreview && <EditorSidebar />}
               {!readOnly && <ImageGenerationModel></ImageGenerationModel>}
             </Plate>
           )}
