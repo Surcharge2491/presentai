@@ -13,21 +13,75 @@ export type PresentationDocument = Prisma.BaseDocumentGetPayload<{
 
 const ITEMS_PER_PAGE = 10;
 
-export async function fetchPresentations(page = 0) {
+export type DashboardFilter = "all" | "recent" | "created" | "favorites";
+
+export async function fetchPresentations(
+  page = 0,
+  filter: DashboardFilter = "all"
+) {
   const user = await requireUser();
 
   const skip = page * ITEMS_PER_PAGE;
 
+  // Base where clause
+  const baseWhere: Prisma.BaseDocumentWhereInput = {
+    userId: user.id,
+    type: DocumentType.PRESENTATION,
+  };
+
+  // Modify query based on filter
+  let orderBy: Prisma.BaseDocumentOrderByWithRelationInput = {
+    updatedAt: "desc",
+  };
+
+  // For favorites filter, we need to join with FavoriteDocument
+  if (filter === "favorites") {
+    const items = await db.baseDocument.findMany({
+      where: {
+        ...baseWhere,
+        favorites: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+      orderBy,
+      take: ITEMS_PER_PAGE,
+      skip: skip,
+      include: {
+        presentation: true,
+        favorites: {
+          where: {
+            userId: user.id,
+          },
+        },
+      },
+    });
+
+    const hasMore = items.length === ITEMS_PER_PAGE;
+
+    return {
+      items,
+      hasMore,
+    };
+  }
+
+  // For recent filter, we would use lastViewedAt if it existed
+  // For now, it falls back to updatedAt like "all" and "created"
+  if (filter === "recent") {
+    // TODO: Add lastViewedAt field to BaseDocument schema
+    // orderBy = { lastViewedAt: "desc" };
+  }
+
+  // "all" and "created" use the same query (both filter by userId already)
   const items = await db.baseDocument.findMany({
-    where: {
-      userId: user.id,
-      type: DocumentType.PRESENTATION,
-    },
-    orderBy: {
-      updatedAt: "desc",
-    },
+    where: baseWhere,
+    orderBy,
     take: ITEMS_PER_PAGE,
     skip: skip,
+    include: {
+      presentation: true,
+    },
   });
 
   const hasMore = items.length === ITEMS_PER_PAGE;

@@ -67,7 +67,9 @@ const PresentationEditor = React.memo(
     const setCurrentSlideIndex = usePresentationState(
       (s) => s.setCurrentSlideIndex,
     );
-    const currentSlideIndexState = usePresentationState((s) => s.currentSlideIndex);
+    const currentSlideIndexState = usePresentationState(
+      (s) => s.currentSlideIndex,
+    );
     const isActive = slideIndex === currentSlideIndexState;
     const editor = usePlateEditor({
       id: id,

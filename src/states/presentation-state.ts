@@ -121,6 +121,16 @@ interface PresentationState {
   // Palette → Editor communication
   pendingInsertNode: TElement | null;
   setPendingInsertNode: (node: TElement | null) => void;
+
+  // Dashboard state
+  dashboardView: "grid" | "list";
+  dashboardFilter: "all" | "recent" | "created" | "favorites";
+  dashboardSidebarSection: string;
+  creditBalance: number;
+  setDashboardView: (view: "grid" | "list") => void;
+  setDashboardFilter: (filter: "all" | "recent" | "created" | "favorites") => void;
+  setDashboardSidebarSection: (section: string) => void;
+  setCreditBalance: (balance: number) => void;
 }
 
 export const usePresentationState = create<PresentationState>((set) => ({
@@ -313,4 +323,14 @@ export const usePresentationState = create<PresentationState>((set) => ({
         ? state.selectedPresentations.filter((p) => p !== id)
         : [...state.selectedPresentations, id],
     })),
+
+  // Dashboard state
+  dashboardView: "grid",
+  dashboardFilter: "all",
+  dashboardSidebarSection: "gammas",
+  creditBalance: 0,
+  setDashboardView: (view) => set({ dashboardView: view }),
+  setDashboardFilter: (filter) => set({ dashboardFilter: filter }),
+  setDashboardSidebarSection: (section) => set({ dashboardSidebarSection: section }),
+  setCreditBalance: (balance) => set({ creditBalance: balance }),
 }));
