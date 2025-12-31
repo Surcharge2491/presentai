@@ -5,24 +5,31 @@ import {
     BarChart,
     BarChartIcon,
     CheckSquare,
+    Circle,
     Code,
-    CreditCard,
+    FileText,
     Heading1,
     Heading2,
     Heading3,
     ImageIcon,
+    Info,
     LayoutGrid,
     LineChartIcon,
+    Link,
     List,
     ListOrdered,
+    MessageSquare,
+    Network,
     PenTool,
     PieChartIcon,
     PilcrowIcon,
     Quote,
-    Search,
+    Shapes,
     Table,
     Type,
     Video,
+    Workflow,
+    Youtube,
 } from "lucide-react";
 import { KEYS } from "platejs";
 import { useEditorRef } from "platejs/react";
@@ -57,7 +64,7 @@ import { cn } from "@/lib/utils";
 const SIDEBAR_CATEGORIES = [
     {
         id: "text",
-        label: "Text",
+        label: "Text & Lists",
         icon: <Type size={20} />,
         items: [
             {
@@ -91,9 +98,9 @@ const SIDEBAR_CATEGORIES = [
                 action: insertBlock,
             },
             {
-                label: "Code",
-                value: KEYS.codeBlock,
-                icon: <Code size={16} />,
+                label: "Callout Box",
+                value: KEYS.callout,
+                icon: <Info size={16} />,
                 action: insertBlock,
             },
             {
@@ -118,7 +125,7 @@ const SIDEBAR_CATEGORIES = [
     },
     {
         id: "media",
-        label: "Media",
+        label: "Images & Video",
         icon: <ImageIcon size={20} />,
         items: [
             {
@@ -131,6 +138,37 @@ const SIDEBAR_CATEGORIES = [
                 label: "Video",
                 value: KEYS.video,
                 icon: <Video size={16} />,
+                action: insertBlock,
+            },
+            {
+                label: "YouTube Embed",
+                value: "youtube",
+                icon: <Youtube size={16} />,
+                action: insertBlock,
+            },
+        ],
+    },
+    {
+        id: "diagrams",
+        label: "Diagrams",
+        icon: <Network size={20} />,
+        items: [
+            {
+                label: "Flowchart",
+                value: "flowchart",
+                icon: <Workflow size={16} />,
+                action: insertBlock,
+            },
+            {
+                label: "Mind Map",
+                value: "mindmap",
+                icon: <Network size={16} />,
+                action: insertBlock,
+            },
+            {
+                label: "Process Diagram",
+                value: "process",
+                icon: <Shapes size={16} />,
                 action: insertBlock,
             },
         ],
@@ -223,7 +261,7 @@ const SIDEBAR_CATEGORIES = [
     },
     {
         id: "layout",
-        label: "Layout",
+        label: "Smart Layouts",
         icon: <LayoutGrid size={20} />,
         items: [
             {
@@ -232,7 +270,37 @@ const SIDEBAR_CATEGORIES = [
                 icon: <Table size={16} />,
                 action: insertBlock,
             },
-            // Add more layout items if available
+            {
+                label: "2-Column Layout",
+                value: KEYS.column,
+                icon: <LayoutGrid size={16} />,
+                action: insertBlock,
+            },
+            {
+                label: "Code Block",
+                value: KEYS.codeBlock,
+                icon: <Code size={16} />,
+                action: insertBlock,
+            },
+        ],
+    },
+    {
+        id: "interactive",
+        label: "Interactive",
+        icon: <Link size={20} />,
+        items: [
+            {
+                label: "Link/Button",
+                value: KEYS.a,
+                icon: <Link size={16} />,
+                action: insertInlineElement,
+            },
+            {
+                label: "Comment",
+                value: KEYS.comment,
+                icon: <MessageSquare size={16} />,
+                action: insertBlock,
+            },
         ],
     },
 ];
