@@ -228,7 +228,7 @@ const PresentationEditor = React.memo(
                     slideId={initialContent.id}
                   />
                 )}
-              {isActive && !readOnly && !isGenerating && !isPreview && <EditorSidebar />}
+              {isActive && !readOnly && !isGenerating && <EditorSidebar />}
               {!readOnly && <ImageGenerationModel></ImageGenerationModel>}
             </Plate>
           )}
