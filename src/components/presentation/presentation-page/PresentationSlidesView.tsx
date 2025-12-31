@@ -131,8 +131,8 @@ export const PresentationSlidesView = ({
           ))}
         </PlateController>
 
-        {/* Floating AI Button - Only show when not presenting */}
-        {!isPresenting && (
+        {/* Floating AI Button - Only show when not presenting and not generating */}
+        {!isPresenting && !isGeneratingPresentation && (
           <FloatingAIButton
             onGenerateContent={() => {
               // TODO: Implement AI content generation
