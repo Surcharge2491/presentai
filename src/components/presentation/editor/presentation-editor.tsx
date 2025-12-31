@@ -143,10 +143,10 @@ const PresentationEditor = React.memo(
             !isActive && !isPresenting && "hover:shadow-xl hover:scale-[1.01]",
             isPresenting && "shadow-none",
             className,
-            initialContent?.layoutType === "right" && "flex-row",
-            initialContent?.layoutType === "vertical" && "flex-col-reverse",
-            initialContent?.layoutType === "left" && "flex-row-reverse",
-            initialContent?.layoutType === "background" && "flex-col",
+            initialContent?.layoutType === "right" && "flex-row gap-8 items-center",
+            initialContent?.layoutType === "vertical" && "flex-col-reverse gap-6",
+            initialContent?.layoutType === "left" && "flex-row-reverse gap-8 items-center",
+            initialContent?.layoutType === "background" && "flex-col gap-4",
             "presentation-slide",
           )}
           style={{
@@ -196,8 +196,10 @@ const PresentationEditor = React.memo(
               <Editor
                 className={cn(
                   className,
-                  "flex flex-col border-none !bg-transparent py-12 outline-none h-full",
+                  "flex flex-col border-none !bg-transparent py-12 outline-none h-full gap-4",
                   (readOnly || isGenerating) && "px-16",
+                  initialContent?.layoutType === "right" && "flex-1",
+                  initialContent?.layoutType === "left" && "flex-1",
                   !initialContent?.alignment && "justify-center",
                   initialContent?.alignment === "start" && "justify-start",
                   initialContent?.alignment === "center" && "justify-center",

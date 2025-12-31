@@ -339,3 +339,47 @@ h6.presentation-heading {
   background-color: rgba(99, 102, 241, 0.2);
   color: inherit;
 }
+
+/* Fix text/image layout overlapping */
+.presentation-slide > * + * {
+  margin-top: 1rem;
+}
+
+.presentation-slide img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.presentation-slide [data-slate-node="element"] {
+  margin-bottom: 0.75rem;
+}
+
+/* Better spacing for different layout types */
+.presentation-slide.flex-row > * {
+  flex: 1 1 0%;
+}
+
+.presentation-slide.flex-row-reverse > * {
+  flex: 1 1 0%;
+}
+
+/* Ensure images don't overflow */
+.presentation-slide [data-plate-node="img"] {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better paragraph spacing */
+.presentation-slide p {
+  margin-bottom: 1rem;
+}
+
+.presentation-slide p:last-child {
+  margin-bottom: 0;
+}
+
+/* Prevent content overflow */
+.presentation-slide {
+  overflow: hidden;
+}
