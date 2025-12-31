@@ -16,6 +16,7 @@ import { PresentModeHeader } from "../dashboard/PresentModeHeader";
 import { ThinkingDisplay } from "../dashboard/ThinkingDisplay";
 import PresentationEditor from "../editor/presentation-editor";
 import { GlobalUndoRedoHandler } from "./GlobalUndoRedoHandler";
+import { FloatingAIButton } from "../editor/FloatingAIButton";
 
 interface PresentationSlidesViewProps {
   isGeneratingPresentation: boolean;
@@ -129,6 +130,28 @@ export const PresentationSlidesView = ({
             </div>
           ))}
         </PlateController>
+
+        {/* Floating AI Button - Only show when not presenting */}
+        {!isPresenting && (
+          <FloatingAIButton
+            onGenerateContent={() => {
+              // TODO: Implement AI content generation
+              console.log("Generate content for current slide");
+            }}
+            onRewrite={() => {
+              // TODO: Implement AI rewrite
+              console.log("Rewrite content");
+            }}
+            onImprove={() => {
+              // TODO: Implement AI improve
+              console.log("Improve content");
+            }}
+            onSuggest={() => {
+              // TODO: Implement AI suggestions
+              console.log("Get AI suggestions");
+            }}
+          />
+        )}
       </SortableContext>
     </DndContext>
   );
