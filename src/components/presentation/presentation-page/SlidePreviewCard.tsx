@@ -56,12 +56,20 @@ export function SlidePreviewCard({
   return (
     <div
       className={cn(
-        "group relative cursor-pointer overflow-hidden rounded-md border transition-all hover:border-primary",
-        isActive ? "border-primary ring-1 ring-primary" : "border-muted",
+        "group relative cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300",
+        "hover:shadow-lg hover:scale-105 hover:-translate-y-0.5",
+        isActive
+          ? "border-primary ring-2 ring-primary/20 shadow-xl shadow-primary/10"
+          : "border-border/50 hover:border-primary/50",
       )}
       onClick={onClick}
     >
-      <div className="absolute left-2 top-1 z-10 rounded-sm bg-muted px-1 py-0.5 text-xs font-medium text-muted-foreground">
+      <div className={cn(
+        "absolute left-2 top-2 z-10 rounded-md px-2 py-1 text-xs font-bold shadow-sm transition-all",
+        isActive
+          ? "bg-primary text-primary-foreground"
+          : "bg-background/80 backdrop-blur-sm text-muted-foreground group-hover:bg-primary/10"
+      )}>
         {index + 1}
       </div>
       <div

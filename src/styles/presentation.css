@@ -252,3 +252,90 @@ h6.presentation-heading {
 .presentation-slide[style*="background"] {
   background-color: var(--presentation-background) !important;
 }
+
+/* Premium Editor Enhancements */
+.presentation-slide {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.presentation-slide:hover {
+  transform: translateZ(0);
+}
+
+/* Better Typography */
+.presentation-slide h1,
+.presentation-slide h2,
+.presentation-slide h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.presentation-slide p {
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* Smooth scrolling */
+.presentation-slides {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.3) transparent;
+}
+
+.presentation-slides::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.presentation-slides::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.presentation-slides::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.3);
+  border-radius: 20px;
+  border: transparent;
+}
+
+.presentation-slides::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(155, 155, 155, 0.5);
+}
+
+/* Premium focus states */
+.presentation-slide:focus-within {
+  outline: none;
+}
+
+/* Backdrop blur for modern look */
+.fixed-toolbar {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Better animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-wrapper {
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Premium gradient backgrounds */
+.premium-gradient-bg {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+}
+
+/* Text selection */
+.presentation-slide ::selection {
+  background-color: rgba(99, 102, 241, 0.2);
+  color: inherit;
+}

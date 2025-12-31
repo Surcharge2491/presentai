@@ -107,20 +107,23 @@ function SlidePreviewBase({
                   ),
                 }}
               >
-                <div className="h-max max-h-[90vh] overflow-auto">
-                  <div className="flex flex-col space-y-4 p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <h2 className="text-sm font-semibold">Slides</h2>
+                <div className="h-max max-h-[90vh] overflow-auto bg-gradient-to-b from-background to-muted/20 border-r border-border/50 backdrop-blur-sm">
+                  <div className="flex flex-col space-y-3 p-3">
+                    <div className="mb-1 flex items-center justify-between px-2 py-1">
+                      <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Slides ({slides.length})
+                      </h2>
 
                       <Button
                         onClick={() => setIsSidebarCollapsed(true)}
                         variant="ghost"
                         size="sm"
+                        className="h-6 w-6 p-0 hover:bg-muted"
                       >
-                        <PanelRightOpen className="size-3" />
+                        <PanelRightOpen className="size-3.5" />
                       </Button>
                     </div>
-                    <div className="flex flex-col space-y-4">
+                    <div className="flex flex-col space-y-2.5">
                       {slides.map((slide, index) => (
                         <MemoPreviewItem
                           key={slide.id}
