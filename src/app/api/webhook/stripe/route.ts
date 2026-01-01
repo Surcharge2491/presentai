@@ -67,5 +67,39 @@ export async function POST(req: NextRequest) {
         });
     }
 
+    // Handle subscription cancellation
+    if (event.type === "customer.subscription.deleted") {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        await db.user.update({
+            where: {
+                stripeSubscriptionId: subscription.id,
+            },
+            data: {
+                hasAccess: false, // Revoke access
+                stripeSubscriptionId: null,
+                stripePriceId: null,
+            },
+        });
+    }
+
+    // Handle subscription updates (upgrades/downgrades)
+    if (event.type === "customer.subscription.updated") {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        await db.user.update({
+            where: {
+                stripeSubscriptionId: subscription.id,
+            },
+            data: {
+                stripePriceId: subscription.items.data[0]?.price.id ?? "",
+                stripeCurrentPeriodEnd: new Date(
+                    subscription.current_period_end * 1000,
+                ),
+                hasAccess: subscription.status === "active",
+            },
+        });
+    }
+
     return new NextResponse(null, { status: 200 });
 }
