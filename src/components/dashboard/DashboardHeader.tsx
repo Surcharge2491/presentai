@@ -15,6 +15,7 @@ import {
   FileText,
   Image as ImageIcon,
   Coins,
+  Crown,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import SideBarDropdown from "@/components/auth/Dropdown";
@@ -84,6 +85,16 @@ export function DashboardHeader() {
           <Coins className="h-4 w-4 text-amber-500" />
           <span>{creditBalance} credits</span>
         </Badge>
+
+        {/* Upgrade to Pro button */}
+        <Button
+          onClick={() => router.push("/pricing")}
+          variant="default"
+          className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white"
+        >
+          <Crown className="mr-2 h-4 w-4" />
+          Upgrade to Pro
+        </Button>
 
         {/* User profile dropdown */}
         <SideBarDropdown />
