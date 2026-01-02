@@ -7,6 +7,12 @@ import { db } from "@/server/db";
 import { redirect } from "next/navigation";
 
 export const stripeRedirect = async () => {
+    // Debug logging
+    console.log("=== STRIPE DEBUG ===");
+    console.log("STRIPE_API_KEY:", env.STRIPE_API_KEY ? `SET (${env.STRIPE_API_KEY.substring(0, 20)}...)` : "NOT SET");
+    console.log("STRIPE_PRICE_ID:", env.STRIPE_PRICE_ID || "NOT SET");
+    console.log("==================");
+
     // Check if Stripe is configured
     if (!env.STRIPE_API_KEY || !env.STRIPE_PRICE_ID) {
         console.warn("Stripe is not configured, redirecting to dashboard");
