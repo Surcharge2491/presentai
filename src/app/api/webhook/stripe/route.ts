@@ -21,9 +21,13 @@ export async function POST(req: NextRequest) {
         return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
     }
 
-    const session = event.data.object as Stripe.Checkout.Session;
+    // Log webhook event for debugging
+    console.log(`[Stripe Webhook] Received event: ${event.type}`);
 
+    // Handle checkout session completion (initial subscription)
     if (event.type === "checkout.session.completed") {
+        const session = event.data.object as Stripe.Checkout.Session;
+
         const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string,
         );
@@ -41,16 +45,26 @@ export async function POST(req: NextRequest) {
                 stripeCustomerId: subscription.customer as string,
                 stripePriceId: subscription.items.data[0]?.price.id ?? "",
                 stripeCurrentPeriodEnd: new Date(
-                    (subscription as any).current_period_end * 1000,
+                    subscription.current_period_end * 1000,
                 ),
                 hasAccess: true, // Grant access
             },
         });
+
+        console.log(`[Stripe Webhook] Granted access to user: ${session.metadata.userId}`);
     }
 
+    // Handle successful invoice payment (recurring subscription renewal)
     if (event.type === "invoice.payment_succeeded") {
+        const invoice = event.data.object as Stripe.Invoice;
+
+        // Only process subscription invoices (not one-off invoices)
+        if (!invoice.subscription) {
+            return new NextResponse(null, { status: 200 });
+        }
+
         const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string,
+            invoice.subscription as string,
         );
 
         await db.user.update({
@@ -60,11 +74,13 @@ export async function POST(req: NextRequest) {
             data: {
                 stripePriceId: subscription.items.data[0]?.price.id ?? "",
                 stripeCurrentPeriodEnd: new Date(
-                    (subscription as any).current_period_end * 1000,
+                    subscription.current_period_end * 1000,
                 ),
                 hasAccess: true, // Ensure access is granted
             },
         });
+
+        console.log(`[Stripe Webhook] Renewed subscription: ${subscription.id}`);
     }
 
     // Handle subscription cancellation
@@ -81,6 +97,8 @@ export async function POST(req: NextRequest) {
                 stripePriceId: null,
             },
         });
+
+        console.log(`[Stripe Webhook] Revoked access for subscription: ${subscription.id}`);
     }
 
     // Handle subscription updates (upgrades/downgrades)
@@ -94,11 +112,13 @@ export async function POST(req: NextRequest) {
             data: {
                 stripePriceId: subscription.items.data[0]?.price.id ?? "",
                 stripeCurrentPeriodEnd: new Date(
-                    (subscription as any).current_period_end * 1000,
+                    subscription.current_period_end * 1000,
                 ),
                 hasAccess: subscription.status === "active",
             },
         });
+
+        console.log(`[Stripe Webhook] Updated subscription: ${subscription.id}, status: ${subscription.status}`);
     }
 
     return new NextResponse(null, { status: 200 });
