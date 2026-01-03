@@ -1,8 +1,6 @@
-import { SubscriptionButton } from "@/components/subscription-button";
-import { checkSubscription } from "@/lib/subscription";
+import Link from "next/link";
 
 const PricingPage = async () => {
-    const isPro = await checkSubscription();
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-10 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -50,7 +48,12 @@ const PricingPage = async () => {
                                 Advanced Analytics
                             </li>
                         </ul>
-                        <SubscriptionButton isPro={isPro} />
+                        <Link
+                            href="/checkout"
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                        >
+                            Upgrade to Pro
+                        </Link>
                     </div>
                 </div>
 
