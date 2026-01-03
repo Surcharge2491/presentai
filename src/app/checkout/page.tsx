@@ -8,8 +8,8 @@ export default async function CheckoutPage() {
     const session = await auth();
 
     if (!session?.user) {
-        // Redirect to sign in if not authenticated
-        redirect("/api/auth/signin?callbackUrl=/checkout");
+        // Redirect to sign in with callback to return here
+        redirect("/auth/signin?callbackUrl=/checkout");
     }
 
     // Check if already Pro

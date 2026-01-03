@@ -13,12 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
 export default function SignUp() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl") || "/presentation";
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -41,7 +44,7 @@ export default function SignUp() {
                     data: {
                         name: formData.name,
                     },
-                    emailRedirectTo: `${window.location.origin}/presentation`,
+                    emailRedirectTo: `${window.location.origin}${callbackUrl}`,
                 },
             });
 
@@ -88,8 +91,8 @@ export default function SignUp() {
             // Give cookies time to propagate
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Success! Redirect to presentation page
-            window.location.href = "/presentation";
+            // Success! Redirect to callback URL
+            window.location.href = callbackUrl;
         } catch (err) {
             setError("An error occurred. Please try again.");
         } finally {
@@ -101,7 +104,7 @@ export default function SignUp() {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: `${window.location.origin}/presentation`,
+                redirectTo: `${window.location.origin}${callbackUrl}`,
             },
         });
 

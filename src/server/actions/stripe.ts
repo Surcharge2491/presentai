@@ -15,8 +15,11 @@ export const stripeRedirect = async () => {
 
     // Check if Stripe is configured
     if (!env.STRIPE_API_KEY || !env.STRIPE_PRICE_ID) {
-        console.warn("Stripe is not configured, redirecting to dashboard");
-        redirect("/presentation");
+        console.error("❌ Stripe configuration missing:", {
+            hasApiKey: !!env.STRIPE_API_KEY,
+            hasPriceId: !!env.STRIPE_PRICE_ID
+        });
+        throw new Error("Payment system is not configured. Please contact support.");
     }
 
     const session = await auth();
@@ -24,7 +27,7 @@ export const stripeRedirect = async () => {
     const userEmail = session?.user?.email;
 
     if (!userId || !userEmail) {
-        throw new Error("Unauthorized");
+        throw new Error("You must be signed in to upgrade your plan");
     }
 
     const user = await db.user.findUnique({
@@ -38,28 +41,34 @@ export const stripeRedirect = async () => {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-    const stripeSession = await stripe.checkout.sessions.create({
-        customer: user?.stripeCustomerId ?? undefined,
-        customer_email: user?.stripeCustomerId ? undefined : userEmail,
-        line_items: [
-            {
-                price: env.STRIPE_PRICE_ID,
-                quantity: 1,
+    try {
+        const stripeSession = await stripe.checkout.sessions.create({
+            customer: user?.stripeCustomerId ?? undefined,
+            customer_email: user?.stripeCustomerId ? undefined : userEmail,
+            line_items: [
+                {
+                    price: env.STRIPE_PRICE_ID,
+                    quantity: 1,
+                },
+            ],
+            mode: "subscription",
+            success_url: `${appUrl}/presentation?success=true`,
+            cancel_url: `${appUrl}/pricing?canceled=true`,
+            metadata: {
+                userId,
             },
-        ],
-        mode: "subscription",
-        success_url: `${appUrl}/presentation`,
-        cancel_url: `${appUrl}/presentation`,
-        metadata: {
-            userId,
-        },
-    });
+        });
 
-    if (!stripeSession.url) {
-        throw new Error("Something went wrong");
+        if (!stripeSession.url) {
+            throw new Error("Failed to create checkout session");
+        }
+
+        console.log(`✅ Created Stripe checkout session for user: ${userId}`);
+        redirect(stripeSession.url);
+    } catch (error) {
+        console.error("❌ Stripe checkout error:", error);
+        throw new Error("Failed to start checkout. Please try again or contact support.");
     }
-
-    redirect(stripeSession.url);
 };
 
 export const manageSubscription = async () => {
