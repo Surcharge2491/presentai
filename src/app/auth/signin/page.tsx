@@ -13,12 +13,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
 export default function SignIn() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/presentation";
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -66,9 +69,9 @@ export default function SignIn() {
         // Give cookies time to propagate
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        console.log('🚀 Redirecting to /presentation');
+        console.log(`🚀 Redirecting to ${callbackUrl}`);
         // Redirect with hard navigation to ensure cookies
-        window.location.href = "/presentation";
+        window.location.href = callbackUrl;
       } else {
         console.error('❌ No user data returned');
         setError('Login failed - no user data');
@@ -85,7 +88,7 @@ export default function SignIn() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/presentation`,
+        redirectTo: `${window.location.origin}${callbackUrl}`,
       },
     });
 
