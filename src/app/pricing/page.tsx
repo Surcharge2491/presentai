@@ -1,7 +1,11 @@
 import { SubscriptionButton } from "@/components/subscription-button";
 import { checkSubscription } from "@/lib/subscription";
+import { auth } from "@/server/auth";
+import Link from "next/link";
 
 const PricingPage = async () => {
+    const session = await auth();
+    const isAuthenticated = !!session?.user;
     const isPro = await checkSubscription();
 
     return (
@@ -27,6 +31,14 @@ const PricingPage = async () => {
                                 Limited Presentations
                             </li>
                         </ul>
+                        {!isAuthenticated && (
+                            <Link
+                                href="/auth/signup"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+                            >
+                                Get Started Free
+                            </Link>
+                        )}
                     </div>
 
                     {/* Pro Plan */}
@@ -50,7 +62,16 @@ const PricingPage = async () => {
                                 Advanced Analytics
                             </li>
                         </ul>
-                        <SubscriptionButton isPro={isPro} />
+                        {!isAuthenticated ? (
+                            <Link
+                                href="/auth/signup?callbackUrl=/pricing"
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                            >
+                                Sign Up to Upgrade
+                            </Link>
+                        ) : (
+                            <SubscriptionButton isPro={isPro} />
+                        )}
                     </div>
                 </div>
             </div>
