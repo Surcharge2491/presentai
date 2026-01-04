@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
         const subscription = await stripe.subscriptions.retrieve(
             session.subscription as string,
-        );
+        ) as Stripe.Subscription;
 
         if (!session?.metadata?.userId) {
             return new NextResponse("User id is required", { status: 400 });
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
                 stripeCustomerId: subscription.customer as string,
                 stripePriceId: subscription.items.data[0]?.price.id ?? "",
                 stripeCurrentPeriodEnd: new Date(
-                    subscription.current_period_end * 1000,
+                    (subscription.items.data[0]?.current_period_end ?? 0) * 1000,
                 ),
                 hasAccess: true, // Grant access
             },
@@ -59,13 +59,14 @@ export async function POST(req: NextRequest) {
         const invoice = event.data.object as Stripe.Invoice;
 
         // Only process subscription invoices (not one-off invoices)
-        if (!invoice.subscription) {
+        const subscriptionId = invoice.parent?.subscription_details?.subscription;
+        if (!subscriptionId || typeof subscriptionId !== 'string') {
             return new NextResponse(null, { status: 200 });
         }
 
         const subscription = await stripe.subscriptions.retrieve(
-            invoice.subscription as string,
-        );
+            subscriptionId,
+        ) as Stripe.Subscription;
 
         await db.user.update({
             where: {
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
             data: {
                 stripePriceId: subscription.items.data[0]?.price.id ?? "",
                 stripeCurrentPeriodEnd: new Date(
-                    subscription.current_period_end * 1000,
+                    (subscription.items.data[0]?.current_period_end ?? 0) * 1000,
                 ),
                 hasAccess: true, // Ensure access is granted
             },
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest) {
             data: {
                 stripePriceId: subscription.items.data[0]?.price.id ?? "",
                 stripeCurrentPeriodEnd: new Date(
-                    subscription.current_period_end * 1000,
+                    (subscription.items.data[0]?.current_period_end ?? 0) * 1000,
                 ),
                 hasAccess: subscription.status === "active",
             },
