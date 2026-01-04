@@ -79,17 +79,23 @@ export default function SignUp() {
 
             console.log('✅ Supabase session established:', session.access_token ? 'Yes' : 'No');
 
-            // Sync user to Prisma database
+            // Sync user to Prisma database with password
             try {
                 const syncResponse = await fetch('/api/auth/sync-user', {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        password: formData.password, // Pass password to be hashed and saved
+                    }),
                 });
 
                 if (!syncResponse.ok) {
                     throw new Error('Failed to sync user to database');
                 }
 
-                console.log('✅ User synced to Prisma');
+                console.log('✅ User synced to Prisma with password');
             } catch (syncErr) {
                 console.error('❌ Sync failed:', syncErr);
                 setError('Failed to sync user. Please contact support.');
