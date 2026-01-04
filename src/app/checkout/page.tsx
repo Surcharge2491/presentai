@@ -7,21 +7,33 @@ export default async function CheckoutPage() {
     // Check if user is authenticated
     const session = await auth();
 
+    console.log("=== CHECKOUT PAGE DEBUG ===");
+    console.log("Session:", session?.user ? `User: ${session.user.email}` : "No session");
+
     if (!session?.user) {
-        // Redirect to sign in with callback to return here
+        console.log("❌ No session, redirecting to signin");
         redirect("/auth/signin?callbackUrl=/checkout");
     }
 
+    console.log("✅ User authenticated:", session.user.id);
+
     // Check if already Pro
     const isPro = await checkSubscription();
+    console.log("Is Pro:", isPro);
 
     if (isPro) {
-        // Already Pro, redirect to presentations
+        console.log("✅ Already Pro, redirecting to presentations");
         redirect("/presentation");
     }
 
     // Create checkout session and redirect to Stripe
-    await stripeRedirect();
+    try {
+        console.log("🔄 Calling stripeRedirect...");
+        await stripeRedirect();
+    } catch (error) {
+        console.error("❌ Stripe redirect failed:", error);
+        throw error; // Re-throw to show error page
+    }
 
     // This won't be reached as stripeRedirect redirects
     return null;
