@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import { signIn } from "next-auth/react";
 
 export default function SignUp() {
     const router = useRouter();
@@ -76,22 +77,55 @@ export default function SignUp() {
                 return;
             }
 
-            console.log('✅ Session established:', session.access_token ? 'Yes' : 'No');
+            console.log('✅ Supabase session established:', session.access_token ? 'Yes' : 'No');
 
             // Sync user to Prisma database
             try {
-                await fetch('/api/auth/sync-user', {
+                const syncResponse = await fetch('/api/auth/sync-user', {
                     method: 'POST',
                 });
+
+                if (!syncResponse.ok) {
+                    throw new Error('Failed to sync user to database');
+                }
+
+                console.log('✅ User synced to Prisma');
             } catch (syncErr) {
-                console.error('Sync failed:', syncErr);
-                // Continue anyway - user exists in Supabase
+                console.error('❌ Sync failed:', syncErr);
+                setError('Failed to sync user. Please contact support.');
+                setLoading(false);
+                return;
             }
 
-            // Give cookies time to propagate
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Sign in via NextAuth to establish NextAuth session
+            console.log('🔄 Signing in via NextAuth...');
+            try {
+                const result = await signIn('credentials', {
+                    email: formData.email,
+                    password: formData.password,
+                    redirect: false,
+                });
+
+                if (result?.error) {
+                    console.error('❌ NextAuth signin failed:', result.error);
+                    setError('Account created but signin failed. Please try signing in manually.');
+                    setLoading(false);
+                    return;
+                }
+
+                console.log('✅ NextAuth session established');
+            } catch (nextAuthErr) {
+                console.error('❌ NextAuth error:', nextAuthErr);
+                setError('Account created but signin failed. Please try signing in manually.');
+                setLoading(false);
+                return;
+            }
+
+            // Give sessions time to propagate
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             // Success! Redirect to callback URL
+            console.log(`✅ Redirecting to: ${callbackUrl}`);
             window.location.href = callbackUrl;
         } catch (err) {
             setError("An error occurred. Please try again.");

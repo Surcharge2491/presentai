@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import { signIn } from "next-auth/react";
 
 export default function SignIn() {
   const router = useRouter();
@@ -53,8 +54,8 @@ export default function SignIn() {
       }
 
       if (data.user && data.session) {
-        console.log('✅ User logged in:', data.user.email);
-        console.log('✅ Session exists:', data.session.access_token ? 'Yes' : 'No');
+        console.log('✅ Supabase user logged in:', data.user.email);
+        console.log('✅ Supabase session exists:', data.session.access_token ? 'Yes' : 'No');
 
         console.log('🔄 Syncing user to Prisma...');
         // Sync user to Prisma database
@@ -62,12 +63,37 @@ export default function SignIn() {
           await fetch('/api/auth/sync-user', {
             method: 'POST',
           });
+          console.log('✅ User synced to Prisma');
         } catch (syncErr) {
           console.warn('⚠️ Sync failed, but continuing:', syncErr);
         }
 
-        // Give cookies time to propagate
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Sign in via NextAuth to establish NextAuth session
+        console.log('🔄 Signing in via NextAuth...');
+        try {
+          const result = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+          });
+
+          if (result?.error) {
+            console.error('❌ NextAuth signin failed:', result.error);
+            setError('Login failed. Please check your credentials.');
+            setLoading(false);
+            return;
+          }
+
+          console.log('✅ NextAuth session established');
+        } catch (nextAuthErr) {
+          console.error('❌ NextAuth error:', nextAuthErr);
+          setError('Login failed. Please try again.');
+          setLoading(false);
+          return;
+        }
+
+        // Give sessions time to propagate
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         console.log(`🚀 Redirecting to ${callbackUrl}`);
         // Redirect with hard navigation to ensure cookies
