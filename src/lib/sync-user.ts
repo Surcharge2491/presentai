@@ -46,7 +46,7 @@ export async function syncSupabaseUserToPrisma() {
                     image: user.user_metadata.avatar_url,
                     emailVerified: user.email_confirmed_at ? new Date(user.email_confirmed_at) : null,
                     role: 'USER',
-                    hasAccess: false,
+                    hasAccess: true, // Give free tier access by default (Pro features gated by checkSubscription)
                 }
             })
             console.log('✅ User created in Prisma:', newUser.email)
