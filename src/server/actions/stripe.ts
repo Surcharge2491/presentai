@@ -41,34 +41,30 @@ export const stripeRedirect = async () => {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-    try {
-        const stripeSession = await stripe.checkout.sessions.create({
-            customer: user?.stripeCustomerId ?? undefined,
-            customer_email: user?.stripeCustomerId ? undefined : userEmail,
-            line_items: [
-                {
-                    price: env.STRIPE_PRICE_ID,
-                    quantity: 1,
-                },
-            ],
-            mode: "subscription",
-            success_url: `${appUrl}/presentation?success=true`,
-            cancel_url: `${appUrl}/pricing?canceled=true`,
-            metadata: {
-                userId,
+    const stripeSession = await stripe.checkout.sessions.create({
+        customer: user?.stripeCustomerId ?? undefined,
+        customer_email: user?.stripeCustomerId ? undefined : userEmail,
+        line_items: [
+            {
+                price: env.STRIPE_PRICE_ID,
+                quantity: 1,
             },
-        });
+        ],
+        mode: "subscription",
+        success_url: `${appUrl}/presentation?success=true`,
+        cancel_url: `${appUrl}/pricing?canceled=true`,
+        metadata: {
+            userId,
+        },
+    });
 
-        if (!stripeSession.url) {
-            throw new Error("Failed to create checkout session");
-        }
-
-        console.log(`✅ Created Stripe checkout session for user: ${userId}`);
-        redirect(stripeSession.url);
-    } catch (error) {
-        console.error("❌ Stripe checkout error:", error);
-        throw new Error("Failed to start checkout. Please try again or contact support.");
+    if (!stripeSession.url) {
+        throw new Error("Failed to create checkout session");
     }
+
+    console.log(`✅ Created Stripe checkout session for user: ${userId}`);
+    console.log(`🚀 Redirecting to: ${stripeSession.url}`);
+    redirect(stripeSession.url);
 };
 
 export const manageSubscription = async () => {
