@@ -32,9 +32,10 @@ export async function POST(req: Request) {
                 emailVerified: user.email_confirmed_at ? new Date(user.email_confirmed_at) : null,
             }
 
-            // If password provided and user doesn't have one, hash and save it
-            if (password && !existingUser.password) {
+            // If password provided, hash and save/update it (handles existing users without password)
+            if (password) {
                 updateData.password = await bcrypt.hash(password, 10)
+                console.log('🔐 Password updated for existing user:', user.email)
             }
 
             const updatedUser = await db.user.update({
