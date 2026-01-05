@@ -27,13 +27,8 @@ export default async function CheckoutPage() {
     }
 
     // Create checkout session and redirect to Stripe
-    try {
-        console.log("🔄 Calling stripeRedirect...");
-        await stripeRedirect();
-    } catch (error) {
-        console.error("❌ Stripe redirect failed:", error);
-        throw error; // Re-throw to show error page
-    }
+    console.log("🔄 Calling stripeRedirect...");
+    await stripeRedirect();
 
     // This won't be reached as stripeRedirect redirects
     return null;
