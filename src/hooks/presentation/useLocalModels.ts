@@ -4,39 +4,11 @@ import { useEffect, useState } from "react";
 interface ModelInfo {
   id: string;
   name: string;
-  provider: "ollama" | "lmstudio";
-}
-
-interface OllamaResponse {
-  models?: Array<{ name: string }>;
+  provider: "lmstudio";
 }
 
 interface LMStudioResponse {
   data?: Array<{ id: string }>;
-}
-
-// Fetch models from Ollama
-async function fetchOllamaModels(): Promise<ModelInfo[]> {
-  try {
-    const response = await fetch("http://localhost:11434/api/tags");
-    if (!response.ok) {
-      throw new Error("Ollama not available");
-    }
-
-    const data = (await response.json()) as OllamaResponse;
-    if (!data.models || !Array.isArray(data.models)) {
-      return [];
-    }
-
-    return data.models.map((model) => ({
-      id: `ollama-${model.name}`,
-      name: model.name,
-      provider: "ollama" as const,
-    }));
-  } catch (error) {
-    console.log("Ollama not available:", error);
-    return [];
-  }
 }
 
 // Fetch models from LM Studio
@@ -64,70 +36,15 @@ async function fetchLMStudioModels(): Promise<ModelInfo[]> {
 
 // Fetch all local models
 async function fetchLocalModels(): Promise<ModelInfo[]> {
-  const [ollamaModels, lmStudioModels] = await Promise.all([
-    fetchOllamaModels(),
-    fetchLMStudioModels(),
-  ]);
-
-  return [...ollamaModels, ...lmStudioModels];
+  const lmStudioModels = await fetchLMStudioModels();
+  return lmStudioModels;
 }
 
-// Popular downloadable models for Ollama
-export const downloadableModels: ModelInfo[] = [
-  {
-    id: "ollama-llama3.1:8b",
-    name: "llama3.1:8b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-llama3.1:70b",
-    name: "llama3.1:70b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-llama3.2:3b",
-    name: "llama3.2:3b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-llama3.2:8b",
-    name: "llama3.2:8b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-mistral:7b",
-    name: "mistral:7b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-codellama:7b",
-    name: "codellama:7b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-qwen2.5:7b",
-    name: "qwen2.5:7b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-gemma2:9b",
-    name: "gemma2:9b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-phi3:3.8b",
-    name: "phi3:3.8b",
-    provider: "ollama",
-  },
-  {
-    id: "ollama-neural-chat:7b",
-    name: "neural-chat:7b",
-    provider: "ollama",
-  },
-];
+// No downloadable models available
+export const downloadableModels: ModelInfo[] = [];
 
-// Fallback models when no local models are available (same as downloadable for now)
-export const fallbackModels: ModelInfo[] = downloadableModels;
+// Fallback models when no local models are available
+export const fallbackModels: ModelInfo[] = [];
 
 // localStorage keys
 const MODELS_CACHE_KEY = "presentation-models-cache";

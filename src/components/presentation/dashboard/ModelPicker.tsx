@@ -15,7 +15,7 @@ import {
   useLocalModels,
 } from "@/hooks/presentation/useLocalModels";
 import { usePresentationState } from "@/states/presentation-state";
-import { Bot, Cpu, Loader2, Monitor } from "lucide-react";
+import { Bot, Loader2, Monitor } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export function ModelPicker({
@@ -36,7 +36,7 @@ export function ModelPicker({
       if (savedModel) {
         console.log("Restoring model from localStorage:", savedModel);
         setModelProvider(
-          savedModel.modelProvider as "openai" | "ollama" | "lmstudio",
+          savedModel.modelProvider as "openai" | "lmstudio",
         );
         setModelId(savedModel.modelId);
       }
@@ -54,14 +54,8 @@ export function ModelPicker({
   const { localModels, downloadableModels, showDownloadable } = displayData;
 
   // Group models by provider
-  const ollamaModels = localModels.filter(
-    (model) => model.provider === "ollama",
-  );
   const lmStudioModels = localModels.filter(
     (model) => model.provider === "lmstudio",
-  );
-  const downloadableOllamaModels = downloadableModels.filter(
-    (model) => model.provider === "ollama",
   );
 
   // Helper function to create model option
@@ -71,22 +65,17 @@ export function ModelPicker({
   ) => ({
     id: model.id,
     label: model.name,
-    displayLabel:
-      model.provider === "ollama"
-        ? `ollama ${model.name}`
-        : `lm-studio ${model.name}`,
-    icon: model.provider === "ollama" ? Cpu : Monitor,
+    displayLabel: `lm-studio ${model.name}`,
+    icon: Monitor,
     description: isDownloadable
-      ? `Downloadable ${model.provider === "ollama" ? "Ollama" : "LM Studio"} model (will auto-download)`
-      : `Local ${model.provider === "ollama" ? "Ollama" : "LM Studio"} model`,
+      ? `Downloadable LM Studio model (will auto-download)`
+      : `Local LM Studio model`,
     isDownloadable,
   });
 
   // Get current model value
   const getCurrentModelValue = () => {
-    if (modelProvider === "ollama") {
-      return `ollama-${modelId}`;
-    } else if (modelProvider === "lmstudio") {
+    if (modelProvider === "lmstudio") {
       return `lmstudio-${modelId}`;
     }
     return modelProvider;
@@ -108,7 +97,7 @@ export function ModelPicker({
     if (localModel) {
       return {
         label: localModel.name,
-        icon: localModel.provider === "ollama" ? Cpu : Monitor,
+        icon: Monitor,
       };
     }
 
@@ -119,7 +108,7 @@ export function ModelPicker({
     if (downloadableModel) {
       return {
         label: downloadableModel.name,
-        icon: downloadableModel.provider === "ollama" ? Cpu : Monitor,
+        icon: Monitor,
       };
     }
 
@@ -137,12 +126,6 @@ export function ModelPicker({
       setModelId("");
       setSelectedModel("openai", "");
       console.log("Saved to localStorage: openai, ''");
-    } else if (value.startsWith("ollama-")) {
-      const model = value.replace("ollama-", "");
-      setModelProvider("ollama");
-      setModelId(model);
-      setSelectedModel("ollama", model);
-      console.log("Saved to localStorage: ollama,", model);
     } else if (value.startsWith("lmstudio-")) {
       const model = value.replace("lmstudio-", "");
       setModelProvider("lmstudio");
@@ -209,64 +192,12 @@ export function ModelPicker({
             </SelectItem>
           </SelectGroup>
 
-          {/* Local Ollama Models */}
-          {ollamaModels.length > 0 && (
-            <SelectGroup>
-              <SelectLabel>Local Ollama Models</SelectLabel>
-              {ollamaModels.map((model) => {
-                const option = createModelOption(model);
-                const Icon = option.icon;
-                return (
-                  <SelectItem key={option.id} value={option.id}>
-                    <div className="flex items-center gap-3">
-                      <Icon className="h-4 w-4 flex-shrink-0" />
-                      <div className="flex flex-col min-w-0">
-                        <span className="truncate text-sm">
-                          {option.displayLabel}
-                        </span>
-                        <span className="text-xs text-muted-foreground truncate">
-                          {option.description}
-                        </span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectGroup>
-          )}
-
           {/* Local LM Studio Models */}
           {lmStudioModels.length > 0 && (
             <SelectGroup>
               <SelectLabel>Local LM Studio Models</SelectLabel>
               {lmStudioModels.map((model) => {
                 const option = createModelOption(model);
-                const Icon = option.icon;
-                return (
-                  <SelectItem key={option.id} value={option.id}>
-                    <div className="flex items-center gap-3">
-                      <Icon className="h-4 w-4 flex-shrink-0" />
-                      <div className="flex flex-col min-w-0">
-                        <span className="truncate text-sm">
-                          {option.displayLabel}
-                        </span>
-                        <span className="text-xs text-muted-foreground truncate">
-                          {option.description}
-                        </span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectGroup>
-          )}
-
-          {/* Downloadable Ollama Models */}
-          {showDownloadable && downloadableOllamaModels.length > 0 && (
-            <SelectGroup>
-              <SelectLabel>Downloadable Ollama Models</SelectLabel>
-              {downloadableOllamaModels.map((model) => {
-                const option = createModelOption(model, true);
                 const Icon = option.icon;
                 return (
                   <SelectItem key={option.id} value={option.id}>
