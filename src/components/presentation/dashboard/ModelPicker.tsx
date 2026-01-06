@@ -33,12 +33,18 @@ export function ModelPicker({
   useEffect(() => {
     if (!hasRestoredFromStorage.current) {
       const savedModel = getSelectedModel();
-      if (savedModel) {
+      if (savedModel && savedModel.modelProvider !== "ollama") {
         console.log("Restoring model from localStorage:", savedModel);
         setModelProvider(
           savedModel.modelProvider as "openai" | "lmstudio",
         );
         setModelId(savedModel.modelId);
+      } else if (savedModel?.modelProvider === "ollama") {
+        // Reset to OpenAI if saved model was Ollama
+        console.log("Resetting Ollama model to OpenAI");
+        setModelProvider("openai");
+        setModelId("");
+        setSelectedModel("openai", "");
       }
       hasRestoredFromStorage.current = true;
     }
