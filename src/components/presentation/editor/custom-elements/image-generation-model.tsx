@@ -39,6 +39,14 @@ const MODEL_OPTIONS = [
     label: "FLUX Premium",
     value: "black-forest-labs/FLUX1.1-pro",
   },
+  {
+    label: "Nano Banana (Fast)",
+    value: "gemini-2.5-flash-image",
+  },
+  {
+    label: "Nano Banana Pro",
+    value: "gemini-3-pro-image-preview",
+  },
 ];
 
 export function GenerateImageDialogContent({

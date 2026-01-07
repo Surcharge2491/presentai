@@ -4,17 +4,21 @@ import { utapi } from "@/app/api/uploadthing/core";
 import { env } from "@/env";
 import { requireUser } from "@/lib/supabase-server";
 import { db } from "@/server/db";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Together from "together-ai";
 import { UTFile } from "uploadthing/server";
 
 const together = new Together({ apiKey: env.TOGETHER_AI_API_KEY });
+const genAI = new GoogleGenerativeAI(env.GOOGLE_AI_API_KEY ?? "");
 
 export type ImageModelList =
   | "black-forest-labs/FLUX1.1-pro"
   | "black-forest-labs/FLUX.1-schnell"
   | "black-forest-labs/FLUX.1-schnell-Free"
   | "black-forest-labs/FLUX.1-pro"
-  | "black-forest-labs/FLUX.1-dev";
+  | "black-forest-labs/FLUX.1-dev"
+  | "gemini-2.5-flash-image"
+  | "gemini-3-pro-image-preview";
 
 export async function generateImageAction(
   prompt: string,
@@ -26,35 +30,56 @@ export async function generateImageAction(
   try {
     console.log(`Generating image with model: ${model}`);
 
-    // Generate the image using Together AI
-    const response = (await together.images.create({
-      model: model,
-      prompt: prompt,
-      width: 1024,
-      height: 768,
-      steps: model.includes("schnell") ? 4 : 28, // Fewer steps for schnell models
-      n: 1,
-    })) as unknown as {
-      id: string;
-      model: string;
-      object: string;
-      data: {
-        url: string;
-      }[];
-    };
+    let imageUrl: string;
 
-    const imageUrl = response.data[0]?.url;
+    // Check if using Gemini (Nano Banana) or Together AI (FLUX)
+    if (model.startsWith("gemini")) {
+      // Use Google Generative AI (Nano Banana)
+      const geminiModel = genAI.getGenerativeModel({ model });
+      const result = await geminiModel.generateContent(prompt);
+      const response = result.response;
 
-    if (!imageUrl) {
-      throw new Error("Failed to generate image");
+      // Extract base64 image from response
+      const imagePart = response.candidates?.[0]?.content?.parts?.[0];
+      if (!imagePart || !("inlineData" in imagePart)) {
+        throw new Error("Failed to generate image with Gemini");
+      }
+
+      // Convert base64 to URL for downloading
+      const base64Data = imagePart.inlineData.data;
+      const mimeType = imagePart.inlineData.mimeType;
+      imageUrl = `data:${mimeType};base64,${base64Data}`;
+    } else {
+      // Use Together AI for FLUX models
+      const response = (await together.images.create({
+        model: model,
+        prompt: prompt,
+        width: 1024,
+        height: 768,
+        steps: model.includes("schnell") ? 4 : 28,
+        n: 1,
+      })) as unknown as {
+        id: string;
+        model: string;
+        object: string;
+        data: {
+          url: string;
+        }[];
+      };
+
+      imageUrl = response.data[0]?.url ?? "";
+
+      if (!imageUrl) {
+        throw new Error("Failed to generate image");
+      }
     }
 
     console.log(`Generated image URL: ${imageUrl}`);
 
-    // Download the image from Together AI URL
+    // Download the image from Together AI or Gemini Nano Banana
     const imageResponse = await fetch(imageUrl);
     if (!imageResponse.ok) {
-      throw new Error("Failed to download image from Together AI");
+      throw new Error("Failed to download generated image");
     }
 
     const imageBlob = await imageResponse.blob();
