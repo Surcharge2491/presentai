@@ -102,16 +102,16 @@ export function ModelPicker({
     }
 
     // Check for Anthropic models
-    if (currentValue === "anthropic-claude-3-5-sonnet-20241022") {
+    if (currentValue === "anthropic-claude-sonnet-4-20250514") {
       return {
-        label: "Claude 3.5 Sonnet",
+        label: "Claude Sonnet 4",
         icon: Bot,
       };
     }
 
-    if (currentValue === "anthropic-claude-3-5-haiku-20241022") {
+    if (currentValue === "anthropic-claude-opus-4-20250514") {
       return {
-        label: "Claude 3.5 Haiku",
+        label: "Claude Opus 4",
         icon: Bot,
       };
     }
@@ -220,24 +220,24 @@ export function ModelPicker({
                 </div>
               </div>
             </SelectItem>
-            <SelectItem value="anthropic-claude-3-5-sonnet-20241022">
+            <SelectItem value="anthropic-claude-sonnet-4-20250514">
               <div className="flex items-center gap-3">
                 <Bot className="h-4 w-4 flex-shrink-0" />
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-sm">Claude 3.5 Sonnet</span>
+                  <span className="truncate text-sm">Claude Sonnet 4</span>
                   <span className="text-xs text-muted-foreground truncate">
-                    Anthropic model
+                    Anthropic model (Latest)
                   </span>
                 </div>
               </div>
             </SelectItem>
-            <SelectItem value="anthropic-claude-3-5-haiku-20241022">
+            <SelectItem value="anthropic-claude-opus-4-20250514">
               <div className="flex items-center gap-3">
                 <Bot className="h-4 w-4 flex-shrink-0" />
                 <div className="flex flex-col min-w-0">
-                  <span className="truncate text-sm">Claude 3.5 Haiku</span>
+                  <span className="truncate text-sm">Claude Opus 4</span>
                   <span className="text-xs text-muted-foreground truncate">
-                    Anthropic model
+                    Anthropic model (Most Capable)
                   </span>
                 </div>
               </div>
