@@ -41,7 +41,7 @@ export async function generateImageAction(
 
       // Extract base64 image from response
       const imagePart = response.candidates?.[0]?.content?.parts?.[0];
-      if (!imagePart || !("inlineData" in imagePart)) {
+      if (!imagePart || !("inlineData" in imagePart) || !imagePart.inlineData) {
         throw new Error("Failed to generate image with Gemini");
       }
 
