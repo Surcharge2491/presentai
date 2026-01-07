@@ -17,6 +17,8 @@ export const IMAGE_MODELS: { value: ImageModelList; label: string }[] = [
   { value: "black-forest-labs/FLUX.1-schnell-Free", label: "FLUX Fast" },
   { value: "black-forest-labs/FLUX.1-dev", label: "FLUX Developer" },
   { value: "black-forest-labs/FLUX1.1-pro", label: "FLUX Premium" },
+  { value: "gemini-2.5-flash-image", label: "Nano Banana (Fast)" },
+  { value: "gemini-3-pro-image-preview", label: "Nano Banana Pro" },
 ];
 
 interface ImageSourceSelectorProps {
