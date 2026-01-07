@@ -21,7 +21,7 @@ interface PresentationState {
   imageSource: "ai" | "stock";
   stockImageProvider: "unsplash";
   presentationStyle: string;
-  modelProvider: "openai" | "lmstudio";
+  modelProvider: "openai" | "anthropic" | "lmstudio";
   modelId: string;
   savingStatus: "idle" | "saving" | "saved";
   isPresenting: boolean;
@@ -91,7 +91,7 @@ interface PresentationState {
   setImageSource: (source: "ai" | "stock") => void;
   setStockImageProvider: (provider: "unsplash") => void;
   setPresentationStyle: (style: string) => void;
-  setModelProvider: (provider: "openai" | "lmstudio") => void;
+  setModelProvider: (provider: "openai" | "anthropic" | "lmstudio") => void;
   setModelId: (id: string) => void;
   setSavingStatus: (status: "idle" | "saving" | "saved") => void;
   setIsPresenting: (isPresenting: boolean) => void;

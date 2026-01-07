@@ -36,7 +36,7 @@ export function ModelPicker({
       if (savedModel && savedModel.modelProvider !== "ollama") {
         console.log("Restoring model from localStorage:", savedModel);
         setModelProvider(
-          savedModel.modelProvider as "openai" | "lmstudio",
+          savedModel.modelProvider as "openai" | "anthropic" | "lmstudio",
         );
         setModelId(savedModel.modelId);
       } else if (savedModel?.modelProvider === "ollama") {
@@ -81,6 +81,9 @@ export function ModelPicker({
 
   // Get current model value
   const getCurrentModelValue = () => {
+    if (modelProvider === "anthropic") {
+      return `anthropic-${modelId}`;
+    }
     if (modelProvider === "lmstudio") {
       return `lmstudio-${modelId}`;
     }
@@ -94,6 +97,21 @@ export function ModelPicker({
     if (currentValue === "openai") {
       return {
         label: "GPT-4o-mini",
+        icon: Bot,
+      };
+    }
+
+    // Check for Anthropic models
+    if (currentValue === "anthropic-claude-3-5-sonnet-20241022") {
+      return {
+        label: "Claude 3.5 Sonnet",
+        icon: Bot,
+      };
+    }
+
+    if (currentValue === "anthropic-claude-3-5-haiku-20241022") {
+      return {
+        label: "Claude 3.5 Haiku",
         icon: Bot,
       };
     }
@@ -132,6 +150,12 @@ export function ModelPicker({
       setModelId("");
       setSelectedModel("openai", "");
       console.log("Saved to localStorage: openai, ''");
+    } else if (value.startsWith("anthropic-")) {
+      const model = value.replace("anthropic-", "");
+      setModelProvider("anthropic");
+      setModelId(model);
+      setSelectedModel("anthropic", model);
+      console.log("Saved to localStorage: anthropic,", model);
     } else if (value.startsWith("lmstudio-")) {
       const model = value.replace("lmstudio-", "");
       setModelProvider("lmstudio");
@@ -191,7 +215,29 @@ export function ModelPicker({
                 <div className="flex flex-col min-w-0">
                   <span className="truncate text-sm">GPT-4o-mini</span>
                   <span className="text-xs text-muted-foreground truncate">
-                    Cloud-based AI model
+                    OpenAI model
+                  </span>
+                </div>
+              </div>
+            </SelectItem>
+            <SelectItem value="anthropic-claude-3-5-sonnet-20241022">
+              <div className="flex items-center gap-3">
+                <Bot className="h-4 w-4 flex-shrink-0" />
+                <div className="flex flex-col min-w-0">
+                  <span className="truncate text-sm">Claude 3.5 Sonnet</span>
+                  <span className="text-xs text-muted-foreground truncate">
+                    Anthropic model
+                  </span>
+                </div>
+              </div>
+            </SelectItem>
+            <SelectItem value="anthropic-claude-3-5-haiku-20241022">
+              <div className="flex items-center gap-3">
+                <Bot className="h-4 w-4 flex-shrink-0" />
+                <div className="flex flex-col min-w-0">
+                  <span className="truncate text-sm">Claude 3.5 Haiku</span>
+                  <span className="text-xs text-muted-foreground truncate">
+                    Anthropic model
                   </span>
                 </div>
               </div>
